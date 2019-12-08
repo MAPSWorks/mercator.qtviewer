@@ -84,6 +84,11 @@ namespace QTVOSM{
 			int nCurrRightX = ceil((nCenter_X+m_pViewer->windowWidth()/2)/256.0);
 			int nCurrBottomY = ceil((nCenter_Y+m_pViewer->windowHeight()/2)/256.0);
 
+			//Get Aplha paraments
+			const quint8 alphav = m_propPage->alphaValue();
+			QImage alphaMask(256,256,QImage::Format_Grayscale8);
+			if (alphav!=255)
+				alphaMask.fill(alphav);
 			//!2.4 a repeat from tileindx left to right.
 			for (int col = nCurrLeftX;col<=nCurrRightX;col++)
 			{
@@ -111,6 +116,8 @@ namespace QTVOSM{
 						int tar_x = m_pViewer->windowWidth()/2-zero_offX+nTileOffX;
 						int tar_y = m_pViewer->windowHeight()/2-zero_offY+nTileOffY;
 						//bitblt
+						if (alphav!=255)
+							image_source.setAlphaChannel(alphaMask);
 						pPainter->drawImage(tar_x,tar_y,image_source);
 					}
 				}
@@ -185,8 +192,8 @@ namespace QTVOSM{
 		if (event->delta()<0)
 		{
 			nLevel++;
-			if (nLevel>18)
-				nLevel=18;
+			if (nLevel>20)
+				nLevel=20;
 		}
 		else if (event->delta()>0)
 		{
@@ -330,7 +337,7 @@ namespace QTVOSM{
 	 \fn layer_tiles::RegImages
 	 \param nX	col (x) tile id og this level nLevel
 	 \param nY	row (y) tile id og this level nLevel
-	 \param nLevel	current level. In osm, nlevel often take 0~18
+	 \param nLevel	current level. In osm, nlevel often take 0~20
 	 \return bool	succeeded.
 	*/
 	bool layer_tiles::RegImages(int nX, int nY,int nLevel)
